@@ -1,0 +1,3 @@
+[submodule "testrunner"]
+	path = testrunner
+	url = https://github.com/int2str/testrunner.git

@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "true"
+
+      - name: Install ninja-build
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install dependencies
+        run: sudo apt install libfmt-dev libsfml-dev
+
+      - name: Build
+        run: ninja
+
+      - name: Run
+        run: ./build/advent2024 -c -t

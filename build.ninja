@@ -1,0 +1,125 @@
+cxx = clang++
+ar = ar
+
+builddir = build
+b = $builddir
+
+cflags = -O3 -g -std=c++23 -Wextra -Wconversion -Wall -pedantic -Werror -I. -Itestrunner/include
+ldflags = -Wl,--gc-sections -Wl,--relax -L$b -lfmt
+
+rule cxx
+    command = $cxx -MMD -MF $out.d $cflags -c $in -o $out
+    description = C++ $out
+    depfile = $out.d
+
+rule link
+    command = $cxx $cflags $ldflags -o $out $in $libs
+    description = LNK $out
+
+rule ar
+    command = $ar rcs $out $in
+    description = LIB $out
+
+rule run
+    command = $in
+    description = RUN $in
+
+rule size
+    command = size $in
+
+rule compdb
+    command = ninja -t compdb > $out
+    generator = true
+    description = COMPDB
+
+build $b/advent2024: link $b/testrunner_main.o $
+  $b/day_01.o $
+  $b/day_02.o $
+  $b/day_03.o $
+  $b/day_04.o $
+  $b/day_05.o $
+  $b/day_06.o $
+  $b/day_07.o $
+  $b/day_08.o $
+  $b/day_09.o $
+  $b/day_10.o $
+  $b/day_11.o $
+  $b/day_12.o $
+  $b/day_13.o $
+  $b/day_14.o $
+  $b/day_14_robots.o $
+  $b/day_15.o $
+  $b/day_16.o $
+  $b/day_17.o $
+  $b/day_18.o $
+  $b/day_19.o $
+  $b/day_20.o $
+  $b/day_21.o $
+  $b/day_22.o $
+  $b/day_23.o $
+  $b/day_24.o $
+  $b/day_25.o $
+  $b/utils.a
+
+build $b/day_01.o: cxx 01/day_01.cc
+build $b/day_02.o: cxx 02/day_02.cc
+build $b/day_03.o: cxx 03/day_03.cc
+build $b/day_04.o: cxx 04/day_04.cc
+build $b/day_05.o: cxx 05/day_05.cc
+build $b/day_06.o: cxx 06/day_06.cc
+build $b/day_07.o: cxx 07/day_07.cc
+build $b/day_08.o: cxx 08/day_08.cc
+build $b/day_09.o: cxx 09/day_09.cc
+build $b/day_10.o: cxx 10/day_10.cc
+build $b/day_11.o: cxx 11/day_11.cc
+build $b/day_12.o: cxx 12/day_12.cc
+build $b/day_13.o: cxx 13/day_13.cc
+build $b/day_14.o: cxx 14/day_14.cc
+build $b/day_15.o: cxx 15/day_15.cc
+build $b/day_16.o: cxx 16/day_16.cc
+build $b/day_17.o: cxx 17/day_17.cc
+build $b/day_18.o: cxx 18/day_18.cc
+build $b/day_19.o: cxx 19/day_19.cc
+build $b/day_20.o: cxx 20/day_20.cc
+build $b/day_21.o: cxx 21/day_21.cc
+build $b/day_22.o: cxx 22/day_22.cc
+build $b/day_23.o: cxx 23/day_23.cc
+build $b/day_24.o: cxx 24/day_24.cc
+build $b/day_25.o: cxx 25/day_25.cc
+
+build $b/day_14_robots.o: cxx 14/robots.cc
+
+build $b/testrunner_main.o: cxx testrunner/src/testrunner_main.cc
+
+build $b/day_06_animated: link $b/day_06_animated.o $
+    $b/day_06_window.o $
+    $b/utils.a
+  libs = -lsfml-graphics -lsfml-window -lsfml-system
+build $b/day_06_animated.o: cxx 06/day_06_animated.cc
+build $b/day_06_window.o: cxx 06/window.cc
+
+build $b/day_14_animated: link $b/day_14_animated.o $
+    $b/day_14_robots.o $
+    $b/day_14_window.o $
+    $b/utils.a
+  libs = -lsfml-graphics -lsfml-window -lsfml-system
+build $b/day_14_animated.o: cxx 14/day_14_animated.cc
+build $b/day_14_window.o: cxx 14/window.cc
+
+build $b/day_15_animated: link $b/day_15_animated.o $
+    $b/day_15_window.o $
+    $b/utils.a
+  libs = -lsfml-graphics -lsfml-window -lsfml-system
+build $b/day_15_animated.o: cxx 15/day_15_animated.cc
+build $b/day_15_window.o: cxx 15/window.cc
+
+build $b/day_17_jit: link $b/testrunner_main.o $
+    $b/day_17_jit.o $
+    $b/utils.a
+build $b/day_17_jit.o: cxx 17/day_17_jit.cc
+
+build $b/utils.a: ar $b/read_file.o
+build $b/read_file.o: cxx utils/read_file.cc
+
+build compile_commands.json: compdb | build.ninja
+
